@@ -46,7 +46,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 14px 20px;color:#64748b;font-siz
 <div class="field"><label for="date">تاريخ الفحص</label><input id="date" type="date"></div>
 <div class="field"><label for="verdict">التقييم العام</label><select id="verdict"><option>تحتاج مراجعة حسب الملاحظات</option><option>حالة جيدة حسب البنود المفحوصة</option><option>توجد ملاحظات مهمة قبل الشراء</option><option>يوصى بفحص إضافي لدى متخصص</option></select></div>
 </div>
-<h3>صور السيارة والعيوب</h3><p class="hint">أضيفي صورة واضحة للعربية وصورة للعيب أو موضع الفحص؛ ستظهر الصور داخل التقرير النهائي.</p>
+<h3>صور السيارة والعيوب</h3>
 <div class="photo-grid">
 <div class="photo-slot"><label for="photo1">صورة السيارة</label><input id="photo1" type="file" accept="image/*" capture="environment"><img id="preview1" alt="صورة السيارة"><button class="light remove" id="remove1" type="button">إزالة الصورة</button></div>
 <div class="photo-slot"><label for="photo2">صورة ملاحظة أو عيب</label><input id="photo2" type="file" accept="image/*" capture="environment"><img id="preview2" alt="صورة الملاحظة"><button class="light remove" id="remove2" type="button">إزالة الصورة</button></div>
@@ -62,7 +62,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 14px 20px;color:#64748b;font-siz
 </section>
 <section class="panel previewBox">
 <div class="previewTitle"><h2 style="margin:0">معاينة صورة التقرير</h2><span class="pill">GoCar • PNG</span></div>
-<canvas id="report" width="1200" height="2200" aria-label="معاينة صورة التقرير"></canvas>
+<canvas id="report" width="1200" height="1900" aria-label="معاينة صورة التقرير"></canvas>
 <p class="hint">لو النص طويل أو عندك صور كثيرة، راجعي المعاينة قبل إرسال التقرير للعميل.</p>
 </section>
 </main>
@@ -79,7 +79,6 @@ const checks=document.getElementById('checks');
 groups.forEach((g,gi)=>{const title=document.createElement('h3');title.textContent=g[0];checks.appendChild(title);const grid=document.createElement('div');grid.className='checkgrid';g[1].forEach((item,ii)=>{const wrap=document.createElement('div');wrap.className='checkitem';const label=document.createElement('label');label.textContent=item;const sel=document.createElement('select');sel.dataset.item=item;sel.id='c'+gi+'_'+ii;states.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;sel.appendChild(o)});wrap.append(label,sel);grid.appendChild(wrap)});checks.appendChild(grid)});
 const $=id=>document.getElementById(id), val=id=>($(id).value||'').trim();
 let photos={1:null,2:null};
-const gocarLogo = new Image(); gocarLogo.src = './gocar-logo.png';
 function loadPhoto(n,file){if(!file)return;const reader=new FileReader();reader.onload=()=>{photos[n]=reader.result;$('preview'+n).src=reader.result;$('preview'+n).style.display='block';$('remove'+n).style.display='block';draw()};reader.readAsDataURL(file)}
 [1,2].forEach(n=>{$('photo'+n).addEventListener('change',e=>loadPhoto(n,e.target.files[0]));$('remove'+n).addEventListener('click',()=>{photos[n]=null;$('photo'+n).value='';$('preview'+n).removeAttribute('src');$('preview'+n).style.display='none';$('remove'+n).style.display='none';draw()})});
 function rounded(ctx,x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}}
@@ -88,9 +87,8 @@ function drawImageContain(ctx,src,x,y,w,h){return new Promise(resolve=>{if(!src)
 async function draw(){
  const c=$('report'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
  ctx.fillStyle='#071a2c';ctx.fillRect(0,0,1200,170);ctx.fillStyle='#f3bd43';ctx.fillRect(0,164,1200,6);
- if(gocarLogo.complete && gocarLogo.naturalWidth){ctx.drawImage(gocarLogo,35,7,350,155)}
+ ctx.direction='ltr';ctx.textAlign='left';ctx.font='900 76px Arial';ctx.fillStyle='#fff';ctx.fillText('Go',55,85);ctx.fillStyle='#f3bd43';ctx.fillText('Car',145,85);ctx.font='bold 19px Arial';ctx.fillStyle='#dbe5ef';ctx.fillText('INSPECTION YOU CAN TRUST',60,121);
  ctx.direction='rtl';ctx.textAlign='right';ctx.font='bold 39px Tahoma';ctx.fillStyle='#fff';ctx.fillText('تقرير فحص سيارة',1140,69);ctx.font='22px Tahoma';ctx.fillStyle='#f3bd43';ctx.fillText('تقرير العميل — GoCar',1140,112);
- ctx.font='18px Tahoma';ctx.fillStyle='#dbe5ef';ctx.fillText('القاهرة والجيزة | 01000101830',1140,143);
  rounded(ctx,40,195,1120,300,16,'#f7f9fb','#d7dee7');ctx.fillStyle='#102a42';ctx.fillRect(40,195,1120,52);ctx.fillStyle='#f3bd43';ctx.fillRect(40,244,1120,4);ctx.font='bold 25px Tahoma';ctx.fillStyle='#fff';ctx.textAlign='right';ctx.fillText('بيانات العميل والسيارة',1125,230);
  const fields=[['اسم العميل',val('customer')],['رقم التواصل',val('customerPhone')],['ماركة السيارة',val('make')],['الموديل',val('model')],['سنة الصنع',val('year')],['اللون',val('color')],['رقم الشاسيه',val('vin')],['عداد الكيلومترات',val('km')],['تاريخ الفحص',val('date')]];
  fields.forEach((f,i)=>{let col=i%2,row=Math.floor(i/2),x=col===0?1115:610,yy=286+row*43;ctx.textAlign='right';ctx.font='bold 18px Tahoma';ctx.fillStyle='#536579';ctx.fillText(f[0]+':',x,yy);ctx.font='19px Tahoma';ctx.fillStyle='#172638';ctx.fillText((f[1]||'—').slice(0,30),x-125,yy)});
@@ -100,8 +98,8 @@ async function draw(){
  y+=10;rounded(ctx,40,y,1120,82,12,'#102a42',null);ctx.font='bold 22px Tahoma';ctx.fillStyle='#f3bd43';ctx.textAlign='right';ctx.fillText('التقييم العام',1120,y+28);wrapText(ctx,val('verdict'),1120,y+59,1020,24,'bold 20px Tahoma','#fff');y+=101;
  ctx.font='bold 23px Tahoma';ctx.fillStyle='#102a42';ctx.textAlign='right';ctx.fillText('ملاحظات الفحص',1120,y);y+=12;rounded(ctx,40,y,1120,110,10,'#f7f9fb','#d7dee7');wrapText(ctx,val('notes')||'لا توجد ملاحظات مكتوبة.',1100,y+33,1030,25,'19px Tahoma','#172638');y+=125;
  if(photos[1]||photos[2]){ctx.font='bold 23px Tahoma';ctx.fillStyle='#102a42';ctx.textAlign='right';ctx.fillText('صور مرفقة',1120,y);y+=12;await drawImageContain(ctx,photos[1],620,y,540,170);await drawImageContain(ctx,photos[2],40,y,540,170);y+=183}
- ctx.font='bold 17px Tahoma';ctx.fillStyle='#64748b';ctx.textAlign='right';ctx.fillText('اسم الفاحص: '+(val('inspector')||'فريق GoCar'),1140,Math.min(y+8,1980));
- ctx.fillStyle='#071a2c';ctx.fillRect(0,2040,1200,160);ctx.fillStyle='#f3bd43';ctx.fillRect(0,2040,1200,5);ctx.font='bold 28px Tahoma';ctx.fillStyle='#fff';ctx.textAlign='right';ctx.fillText('احجز فحصك مع GoCar',1135,2085);ctx.direction='ltr';ctx.textAlign='left';ctx.font='bold 29px Arial';ctx.fillStyle='#f3bd43';ctx.fillText('01000101830',55,2085);ctx.direction='rtl';ctx.textAlign='center';ctx.font='bold 21px Tahoma';ctx.fillStyle='#fff';ctx.fillText('القاهرة والجيزة • فحص السيارات المستعملة والزيرو',600,2130);ctx.font='16px Tahoma';ctx.fillStyle='#cbd5e1';ctx.fillText('النتائج حسب البنود التي تم فحصها والملاحظات المدونة',600,2165);
+ ctx.font='bold 17px Tahoma';ctx.fillStyle='#64748b';ctx.textAlign='right';ctx.fillText('اسم الفاحص: '+(val('inspector')||'فريق GoCar'),1140,Math.min(y+8,1700));
+ ctx.fillStyle='#071a2c';ctx.fillRect(0,1740,1200,160);ctx.fillStyle='#f3bd43';ctx.fillRect(0,1740,1200,5);ctx.font='bold 28px Tahoma';ctx.fillStyle='#fff';ctx.textAlign='right';ctx.fillText('احجز فحصك مع GoCar',1135,1785);ctx.direction='ltr';ctx.textAlign='left';ctx.font='bold 29px Arial';ctx.fillStyle='#f3bd43';ctx.fillText('01000101830',55,1785);ctx.direction='rtl';ctx.textAlign='center';ctx.font='bold 21px Tahoma';ctx.fillStyle='#fff';ctx.fillText('القاهرة والجيزة • فحص السيارات المستعملة والزيرو',600,1830);ctx.font='16px Tahoma';ctx.fillStyle='#cbd5e1';ctx.fillText('النتائج حسب البنود التي تم فحصها والملاحظات المدونة',600,1865);
 }
 function getData(){const data={};document.querySelectorAll('input:not([type=file]),select,textarea').forEach(el=>{if(el.id)data[el.id]=el.value});data.photos=photos;data.checks={};document.querySelectorAll('[data-item]').forEach(el=>data.checks[el.id]=el.value);return data}
 function setData(d){document.querySelectorAll('input:not([type=file]),select,textarea').forEach(el=>{if(d[el.id]!==undefined)el.value=d[el.id]});photos=d.photos||{1:null,2:null};[1,2].forEach(n=>{if(photos[n]){$('preview'+n).src=photos[n];$('preview'+n).style.display='block';$('remove'+n).style.display='block'}else{$('preview'+n).style.display='none';$('remove'+n).style.display='none'}});Object.entries(d.checks||{}).forEach(([id,v])=>{if($(id))$(id).value=v});draw()}
@@ -112,7 +110,7 @@ $('generate').addEventListener('click',draw);
 $('download').addEventListener('click',async()=>{await draw();const a=document.createElement('a');a.download='GoCar-'+(val('make')||'Report')+'-'+(val('date')||'').replaceAll('-','')+'.png';a.href=$('report').toDataURL('image/png');a.click()});
 $('save').addEventListener('click',()=>{try{const data=getData(),items=getSaved();items.push({id:Date.now(),data});localStorage.setItem('gocar_reports_v1',JSON.stringify(items));refreshSaved();alert('تم حفظ التقرير على هذا الجهاز والمتصفح.')}catch(e){alert('مساحة التخزين قد تكون ممتلئة. حمّلي صورة التقرير واحتفظي بها، أو احذفي تقارير قديمة.')}});
 $('new').addEventListener('click',()=>{if(!confirm('بدء تقرير جديد؟ احفظي التقرير الحالي أولًا إذا احتجتِ إليه.'))return;document.querySelectorAll('input:not([type=file]),textarea').forEach(el=>{if(el.id!=='date')el.value=''});$('date').value=new Date().toISOString().slice(0,10);$('verdict').selectedIndex=0;document.querySelectorAll('[data-item]').forEach(el=>el.selectedIndex=0);[1,2].forEach(n=>{photos[n]=null;$('photo'+n).value='';$('preview'+n).style.display='none';$('remove'+n).style.display='none'});draw()});
-gocarLogo.onload=()=>draw(); refreshSaved();draw();
+refreshSaved();draw();
 </script>
 <script>if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) { window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(()=>{})); }</script>
 </body></html>
