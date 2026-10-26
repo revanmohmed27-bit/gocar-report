@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#071a2c">
+<meta name="description" content="تطبيق GoCar لإعداد تقارير فحص السيارات ومشاركتها مع العملاء">
+<title>GoCar | تقارير فحص السيارات</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<style>
+:root{--navy:#071a2c;--navy2:#102a42;--gold:#f3bd43;--ink:#172638;--muted:#64748b;--line:#d7dee7;--bg:#f1f4f8;--green:#16794b;--red:#b42318;--amber:#a86400}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(120deg,#061321,#17344e);color:#fff;padding:18px 14px calc(18px + env(safe-area-inset-top));border-bottom:4px solid var(--gold)}
+.wrap{max-width:1100px;margin:auto}.brand{font-size:30px;font-weight:900;direction:ltr;text-align:right}.brand span{color:var(--gold)}header p{margin:6px 0 0;color:#dbe5ef;font-size:13px;line-height:1.7}
+main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:16px;max-width:1100px;margin:16px auto;padding:0 12px 30px}
+.panel{background:#fff;border:1px solid #e0e6ed;border-radius:14px;padding:16px;box-shadow:0 5px 18px #0b1d2c0c;min-width:0}
+h2{font-size:18px;margin:0 0 14px;color:var(--navy)}h3{font-size:15px;margin:19px 0 10px;color:#17344e;border-bottom:1px solid var(--line);padding-bottom:7px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field.full{grid-column:1/-1}
+label{font-size:12px;font-weight:bold;color:#405064}input,select,textarea{font:14px Tahoma,Arial;padding:11px;border:1px solid #cbd5e1;border-radius:8px;background:white;width:100%;min-width:0;color:var(--ink)}textarea{min-height:80px;resize:vertical}
+.checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.checkitem{padding:8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px}.checkitem label{display:block;margin-bottom:6px}.checkitem select{padding:8px;font-size:12px}
+button{border:0;border-radius:9px;padding:12px 14px;font:bold 14px Tahoma;cursor:pointer;min-height:43px}.primary{background:var(--gold);color:#101c2a}.secondary{background:var(--navy);color:#fff}.light{background:#e8eef4;color:var(--navy)}.danger{background:#fee4e2;color:#912018}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.actions button{flex:1}
+.hint{font-size:12px;color:var(--muted);line-height:1.8}.previewBox{align-self:start;position:sticky;top:10px}.previewBox canvas{display:block;width:100%;height:auto;border-radius:8px;border:1px solid #d5dce5;background:#fff}
+.previewTitle{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.pill{background:#edf2f7;border-radius:20px;padding:5px 9px;font-size:11px;color:#334155}
+.photo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.photo-slot{border:1px dashed #aebccc;border-radius:10px;padding:10px;background:#f8fafc}.photo-slot img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:7px;margin-top:7px;display:none}.photo-slot .remove{display:none;margin-top:6px;width:100%;padding:7px;font-size:12px}
+.saved-list{display:flex;flex-direction:column;gap:8px}.saved-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border:1px solid var(--line);border-radius:9px;background:#fafbfd}.saved-item strong{font-size:13px}.saved-item small{display:block;color:var(--muted);margin-top:4px}.saved-item button{padding:8px;font-size:12px;min-height:34px}
+footer{max-width:1100px;margin:0 auto;padding:0 14px 20px;color:#64748b;font-size:11px;line-height:1.8}
+@media(max-width:780px){main{grid-template-columns:1fr}.previewBox{position:static;grid-row:1}.grid{grid-template-columns:1fr 1fr}.panel{padding:13px}.brand{font-size:27px}}
+@media(max-width:390px){.grid,.checkgrid,.photo-grid{grid-template-columns:1fr}.actions button{flex:1 1 100%}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="brand"><span style="color:#fff">Go</span><span>Car</span></div><p>تطبيق تقارير فحص السيارات<br>اكتب بيانات السيارة، سجّل نتيجة كل بند، ثم احفظ التقرير كصورة وابعته للعميل.</p></div></header>
+<main>
+<section class="panel">
+<h2>بيانات التقرير</h2>
+<div class="grid">
+<div class="field"><label for="customer">اسم العميل</label><input id="customer" placeholder="اسم العميل"></div>
+<div class="field"><label for="customerPhone">رقم العميل (اختياري)</label><input id="customerPhone" inputmode="tel" placeholder="01xxxxxxxxx"></div>
+<div class="field"><label for="make">ماركة السيارة</label><input id="make" placeholder="مثال: هيونداي"></div>
+<div class="field"><label for="model">الموديل</label><input id="model" placeholder="مثال: إلنترا"></div>
+<div class="field"><label for="year">سنة الصنع</label><input id="year" inputmode="numeric" placeholder="2022"></div>
+<div class="field"><label for="color">اللون</label><input id="color" placeholder="فضي"></div>
+<div class="field"><label for="vin">رقم الشاسيه</label><input id="vin" placeholder="اختياري"></div>
+<div class="field"><label for="km">عداد الكيلومترات</label><input id="km" inputmode="numeric" placeholder="65000 كم"></div>
+<div class="field"><label for="date">تاريخ الفحص</label><input id="date" type="date"></div>
+<div class="field"><label for="verdict">التقييم العام</label><select id="verdict"><option>تحتاج مراجعة حسب الملاحظات</option><option>حالة جيدة حسب البنود المفحوصة</option><option>توجد ملاحظات مهمة قبل الشراء</option><option>يوصى بفحص إضافي لدى متخصص</option></select></div>
+</div>
+<h3>صور السيارة والعيوب</h3><p class="hint">أضيفي صورة واضحة للعربية وصورة للعيب أو موضع الفحص؛ ستظهر الصور داخل التقرير النهائي.</p>
+<div class="photo-grid">
+<div class="photo-slot"><label for="photo1">صورة السيارة</label><input id="photo1" type="file" accept="image/*" capture="environment"><img id="preview1" alt="صورة السيارة"><button class="light remove" id="remove1" type="button">إزالة الصورة</button></div>
+<div class="photo-slot"><label for="photo2">صورة ملاحظة أو عيب</label><input id="photo2" type="file" accept="image/*" capture="environment"><img id="preview2" alt="صورة الملاحظة"><button class="light remove" id="remove2" type="button">إزالة الصورة</button></div>
+</div>
+<h3>بنود الفحص</h3><p class="hint">اختاري حالة كل بند. استخدمي «لم يتم الفحص» إذا لم يتم فحصه بالفعل.</p>
+<div id="checks"></div>
+<h3>ملاحظات الفحص</h3><div class="field"><textarea id="notes" placeholder="اكتبي أماكن الدهان أو الملاحظات على المحرك أو أي تفاصيل مهمة..."></textarea></div>
+<div class="field" style="margin-top:10px"><label for="inspector">اسم الفاحص (اختياري)</label><input id="inspector" placeholder="فريق GoCar"></div>
+<div class="actions"><button class="primary" id="generate">تحديث التقرير</button><button class="secondary" id="download">تحميل صورة PNG</button></div>
+<div class="actions"><button class="light" id="save">حفظ التقرير على هذا الموبايل</button><button class="light" id="new">تقرير جديد</button></div>
+<p class="hint">التقارير المحفوظة تبقى على نفس المتصفح والجهاز. لن تنتقل تلقائيًا لموبايل آخر؛ استخدمي «تحميل صورة PNG» لمشاركة التقرير النهائي.</p>
+<h3>التقارير المحفوظة على الجهاز</h3><div id="saved" class="saved-list"><p class="hint">لا توجد تقارير محفوظة حتى الآن.</p></div>
+</section>
+<section class="panel previewBox">
+<div class="previewTitle"><h2 style="margin:0">معاينة صورة التقرير</h2><span class="pill">GoCar • PNG</span></div>
+<canvas id="report" width="1200" height="2200" aria-label="معاينة صورة التقرير"></canvas>
+<p class="hint">لو النص طويل أو عندك صور كثيرة، راجعي المعاينة قبل إرسال التقرير للعميل.</p>
+</section>
+</main>
+<footer>GoCar — متخصصون في فحص السيارات المستعملة والزيرو. رقم التواصل: 01000101830 • القاهرة والجيزة.<br>التقرير يعكس البيانات والحالات التي أدخلها الفاحص، ولا يغني عن التقييم الفني المباشر.</footer>
+<script>
+const groups=[
+["فحص الصاج والدهان",["الصاج والدهان","الفوارق","القوائم","الخدوش والرتوش","الشنطة والذنب"]],
+["فحص المحرك والميكانيكا",["حالة المحرك","التسريب","الفتيس","العفشة والفرامل"]],
+["الفحص الإلكتروني والكماليات",["الأعطال الإلكترونية","التكييف","الشاشة والأزرار","الإضاءة والحساسات"]],
+["الفحص الداخلي والخارجي",["الصالون والفرش","الأبواب والزجاج","الإطارات","الاستبن والعدة"]]
+];
+const states=["سليم","ملاحظة","يحتاج فحص","لم يتم الفحص"];
+const checks=document.getElementById('checks');
+groups.forEach((g,gi)=>{const title=document.createElement('h3');title.textContent=g[0];checks.appendChild(title);const grid=document.createElement('div');grid.className='checkgrid';g[1].forEach((item,ii)=>{const wrap=document.createElement('div');wrap.className='checkitem';const label=document.createElement('label');label.textContent=item;const sel=document.createElement('select');sel.dataset.item=item;sel.id='c'+gi+'_'+ii;states.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;sel.appendChild(o)});wrap.append(label,sel);grid.appendChild(wrap)});checks.appendChild(grid)});
+const $=id=>document.getElementById(id), val=id=>($(id).value||'').trim();
+let photos={1:null,2:null};
+const gocarLogo = new Image(); gocarLogo.src = './gocar-logo.png';
+function loadPhoto(n,file){if(!file)return;const reader=new FileReader();reader.onload=()=>{photos[n]=reader.result;$('preview'+n).src=reader.result;$('preview'+n).style.display='block';$('remove'+n).style.display='block';draw()};reader.readAsDataURL(file)}
+[1,2].forEach(n=>{$('photo'+n).addEventListener('change',e=>loadPhoto(n,e.target.files[0]));$('remove'+n).addEventListener('click',()=>{photos[n]=null;$('photo'+n).value='';$('preview'+n).removeAttribute('src');$('preview'+n).style.display='none';$('remove'+n).style.display='none';draw()})});
+function rounded(ctx,x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}}
+function wrapText(ctx,text,x,y,maxWidth,lineHeight,font,color,align='right'){ctx.font=font;ctx.fillStyle=color;ctx.textAlign=align;ctx.direction='rtl';let lines=[],line='';for(const word of String(text||'—').split(/\s+/)){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word}else line=test}if(line)lines.push(line);lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lineHeight));return y+lines.length*lineHeight}
+function drawImageContain(ctx,src,x,y,w,h){return new Promise(resolve=>{if(!src){resolve(y);return}const im=new Image();im.onload=()=>{rounded(ctx,x,y,w,h,10,'#f7f9fb','#d7dee7');const scale=Math.min((w-12)/im.width,(h-12)/im.height);const iw=im.width*scale,ih=im.height*scale;ctx.drawImage(im,x+(w-iw)/2,y+(h-ih)/2,iw,ih);resolve(y+h)};im.onerror=()=>resolve(y+h);im.src=src})}
+async function draw(){
+ const c=$('report'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
+ ctx.fillStyle='#071a2c';ctx.fillRect(0,0,1200,170);ctx.fillStyle='#f3bd43';ctx.fillRect(0,164,1200,6);
+ if(gocarLogo.complete && gocarLogo.naturalWidth){ctx.drawImage(gocarLogo,35,7,350,155)}
+ ctx.direction='rtl';ctx.textAlign='right';ctx.font='bold 39px Tahoma';ctx.fillStyle='#fff';ctx.fillText('تقرير فحص سيارة',1140,69);ctx.font='22px Tahoma';ctx.fillStyle='#f3bd43';ctx.fillText('تقرير العميل — GoCar',1140,112);
+ ctx.font='18px Tahoma';ctx.fillStyle='#dbe5ef';ctx.fillText('القاهرة والجيزة | 01000101830',1140,143);
+ rounded(ctx,40,195,1120,300,16,'#f7f9fb','#d7dee7');ctx.fillStyle='#102a42';ctx.fillRect(40,195,1120,52);ctx.fillStyle='#f3bd43';ctx.fillRect(40,244,1120,4);ctx.font='bold 25px Tahoma';ctx.fillStyle='#fff';ctx.textAlign='right';ctx.fillText('بيانات العميل والسيارة',1125,230);
+ const fields=[['اسم العميل',val('customer')],['رقم التواصل',val('customerPhone')],['ماركة السيارة',val('make')],['الموديل',val('model')],['سنة الصنع',val('year')],['اللون',val('color')],['رقم الشاسيه',val('vin')],['عداد الكيلومترات',val('km')],['تاريخ الفحص',val('date')]];
+ fields.forEach((f,i)=>{let col=i%2,row=Math.floor(i/2),x=col===0?1115:610,yy=286+row*43;ctx.textAlign='right';ctx.font='bold 18px Tahoma';ctx.fillStyle='#536579';ctx.fillText(f[0]+':',x,yy);ctx.font='19px Tahoma';ctx.fillStyle='#172638';ctx.fillText((f[1]||'—').slice(0,30),x-125,yy)});
+ let y=530;ctx.fillStyle='#071a2c';ctx.fillRect(40,y,1120,50);ctx.font='bold 26px Tahoma';ctx.fillStyle='#fff';ctx.textAlign='right';ctx.fillText('نتائج بنود الفحص',1125,y+33);y+=69;
+ for(let gi=0;gi<groups.length;gi++){const g=groups[gi];ctx.fillStyle='#f3bd43';ctx.fillRect(40,y-19,1120,36);ctx.font='bold 20px Tahoma';ctx.fillStyle='#102a42';ctx.textAlign='right';ctx.fillText(g[0],1120,y+6);y+=43;
+ for(let ii=0;ii<g[1].length;ii++){const item=g[1][ii],s=$('c'+gi+'_'+ii).value;ctx.fillStyle=ii%2===0?'#f7f9fb':'#fff';ctx.fillRect(40,y-23,1120,38);ctx.font='19px Tahoma';ctx.fillStyle='#172638';ctx.textAlign='right';ctx.fillText(item,1090,y+2);let color=s==='سليم'?'#16794b':s==='ملاحظة'?'#a86400':s==='يحتاج فحص'?'#b42318':'#64748b';rounded(ctx,105, y-19,245,30,8,color,null);ctx.font='bold 17px Tahoma';ctx.fillStyle='#fff';ctx.textAlign='center';ctx.fillText(s,227,y+2);y+=39}y+=6}
+ y+=10;rounded(ctx,40,y,1120,82,12,'#102a42',null);ctx.font='bold 22px Tahoma';ctx.fillStyle='#f3bd43';ctx.textAlign='right';ctx.fillText('التقييم العام',1120,y+28);wrapText(ctx,val('verdict'),1120,y+59,1020,24,'bold 20px Tahoma','#fff');y+=101;
+ ctx.font='bold 23px Tahoma';ctx.fillStyle='#102a42';ctx.textAlign='right';ctx.fillText('ملاحظات الفحص',1120,y);y+=12;rounded(ctx,40,y,1120,110,10,'#f7f9fb','#d7dee7');wrapText(ctx,val('notes')||'لا توجد ملاحظات مكتوبة.',1100,y+33,1030,25,'19px Tahoma','#172638');y+=125;
+ if(photos[1]||photos[2]){ctx.font='bold 23px Tahoma';ctx.fillStyle='#102a42';ctx.textAlign='right';ctx.fillText('صور مرفقة',1120,y);y+=12;await drawImageContain(ctx,photos[1],620,y,540,170);await drawImageContain(ctx,photos[2],40,y,540,170);y+=183}
+ ctx.font='bold 17px Tahoma';ctx.fillStyle='#64748b';ctx.textAlign='right';ctx.fillText('اسم الفاحص: '+(val('inspector')||'فريق GoCar'),1140,Math.min(y+8,1980));
+ ctx.fillStyle='#071a2c';ctx.fillRect(0,2040,1200,160);ctx.fillStyle='#f3bd43';ctx.fillRect(0,2040,1200,5);ctx.font='bold 28px Tahoma';ctx.fillStyle='#fff';ctx.textAlign='right';ctx.fillText('احجز فحصك مع GoCar',1135,2085);ctx.direction='ltr';ctx.textAlign='left';ctx.font='bold 29px Arial';ctx.fillStyle='#f3bd43';ctx.fillText('01000101830',55,2085);ctx.direction='rtl';ctx.textAlign='center';ctx.font='bold 21px Tahoma';ctx.fillStyle='#fff';ctx.fillText('القاهرة والجيزة • فحص السيارات المستعملة والزيرو',600,2130);ctx.font='16px Tahoma';ctx.fillStyle='#cbd5e1';ctx.fillText('النتائج حسب البنود التي تم فحصها والملاحظات المدونة',600,2165);
+}
+function getData(){const data={};document.querySelectorAll('input:not([type=file]),select,textarea').forEach(el=>{if(el.id)data[el.id]=el.value});data.photos=photos;data.checks={};document.querySelectorAll('[data-item]').forEach(el=>data.checks[el.id]=el.value);return data}
+function setData(d){document.querySelectorAll('input:not([type=file]),select,textarea').forEach(el=>{if(d[el.id]!==undefined)el.value=d[el.id]});photos=d.photos||{1:null,2:null};[1,2].forEach(n=>{if(photos[n]){$('preview'+n).src=photos[n];$('preview'+n).style.display='block';$('remove'+n).style.display='block'}else{$('preview'+n).style.display='none';$('remove'+n).style.display='none'}});Object.entries(d.checks||{}).forEach(([id,v])=>{if($(id))$(id).value=v});draw()}
+function getSaved(){try{return JSON.parse(localStorage.getItem('gocar_reports_v1')||'[]')}catch(e){return []}}
+function refreshSaved(){const root=$('saved'),items=getSaved();root.innerHTML='';if(!items.length){root.innerHTML='<p class="hint">لا توجد تقارير محفوظة حتى الآن.</p>';return}items.slice().reverse().forEach(item=>{const row=document.createElement('div');row.className='saved-item';const info=document.createElement('div');const strong=document.createElement('strong');strong.textContent=(item.data.customer||'عميل بدون اسم')+' — '+[item.data.make,item.data.model].filter(Boolean).join(' ');const small=document.createElement('small');small.textContent=item.data.date||'بدون تاريخ';info.append(strong,small);const actions=document.createElement('div');const open=document.createElement('button');open.className='secondary';open.textContent='فتح';open.onclick=()=>setData(item.data);const del=document.createElement('button');del.className='danger';del.textContent='حذف';del.onclick=()=>{if(confirm('حذف التقرير المحفوظ؟')){localStorage.setItem('gocar_reports_v1',JSON.stringify(getSaved().filter(x=>x.id!==item.id)));refreshSaved()}};actions.append(open,del);row.append(info,actions);root.append(row)})}
+$('date').value=new Date().toISOString().slice(0,10);
+$('generate').addEventListener('click',draw);
+$('download').addEventListener('click',async()=>{await draw();const a=document.createElement('a');a.download='GoCar-'+(val('make')||'Report')+'-'+(val('date')||'').replaceAll('-','')+'.png';a.href=$('report').toDataURL('image/png');a.click()});
+$('save').addEventListener('click',()=>{try{const data=getData(),items=getSaved();items.push({id:Date.now(),data});localStorage.setItem('gocar_reports_v1',JSON.stringify(items));refreshSaved();alert('تم حفظ التقرير على هذا الجهاز والمتصفح.')}catch(e){alert('مساحة التخزين قد تكون ممتلئة. حمّلي صورة التقرير واحتفظي بها، أو احذفي تقارير قديمة.')}});
+$('new').addEventListener('click',()=>{if(!confirm('بدء تقرير جديد؟ احفظي التقرير الحالي أولًا إذا احتجتِ إليه.'))return;document.querySelectorAll('input:not([type=file]),textarea').forEach(el=>{if(el.id!=='date')el.value=''});$('date').value=new Date().toISOString().slice(0,10);$('verdict').selectedIndex=0;document.querySelectorAll('[data-item]').forEach(el=>el.selectedIndex=0);[1,2].forEach(n=>{photos[n]=null;$('photo'+n).value='';$('preview'+n).style.display='none';$('remove'+n).style.display='none'});draw()});
+gocarLogo.onload=()=>draw(); refreshSaved();draw();
+</script>
+<script>if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) { window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js").catch(()=>{})); }</script>
+</body></html>
